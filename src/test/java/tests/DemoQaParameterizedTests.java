@@ -1,5 +1,7 @@
 package tests;
 
+import com.codeborne.selenide.Selenide;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -12,12 +14,16 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class DemoQaParameterizedTests extends TestBase {
 
+    @AfterEach
+    void tearDown() {
+        Selenide.closeWebDriver();
+    }
+
     @ValueSource(strings = {
             "What is Lorem Ipsum?",
             "Where does it come from?",
             "Why do we use it?"
     })
-    //1
     @ParameterizedTest(name = "Проверка вопроса в Accordian: {0}")
     void accordianShouldHaveQuestionText(String questionText) {
         open("/accordian");
@@ -30,8 +36,6 @@ public class DemoQaParameterizedTests extends TestBase {
             "Forms, Practice Form",
             "Widgets, Accordian"
     })
-
-    //2
     @ParameterizedTest(name = "В категории {0} есть пункт меню {1}")
     void categoryShouldHaveMenuItem(String categoryName, String menuItemName) {
         open("/");
@@ -51,13 +55,12 @@ public class DemoQaParameterizedTests extends TestBase {
     }
 
     @MethodSource("bookStoreSearchData")
-    //3
     @ParameterizedTest(name = "Поиск книги по слову: {0}")
     void bookStoreShouldShowSearchResults(String searchValue) {
         open("/books");
 
         $("#searchBox").setValue(searchValue);
 
-        $(".rt-tbody").shouldHave(text(searchValue));
+        $(".books-wrapper").shouldHave(text(searchValue));
     }
 }
